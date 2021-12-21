@@ -2,12 +2,16 @@ package com.itheima.authority.controller.auth;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.itheima.authority.biz.service.auth.RoleService;
+import com.itheima.authority.biz.service.auth.UserGroupService;
+import com.itheima.authority.biz.service.auth.UserGroupUserService;
 import com.itheima.authority.biz.service.auth.UserService;
 import com.itheima.authority.biz.service.core.OrgService;
 import com.itheima.authority.biz.service.core.StationService;
 import com.itheima.authority.dto.auth.*;
 import com.itheima.authority.entity.auth.Role;
 import com.itheima.authority.entity.auth.User;
+import com.itheima.authority.entity.auth.UserGroup;
+import com.itheima.authority.entity.auth.UserGroupUser;
 import com.itheima.authority.entity.core.Org;
 import com.itheima.authority.entity.core.Station;
 import com.itheima.authority.vo.ImportResultVO;
@@ -18,11 +22,6 @@ import com.itheima.tools.database.mybatis.conditions.Wraps;
 import com.itheima.tools.database.mybatis.conditions.query.LbqWrapper;
 import com.itheima.tools.dozer.DozerUtils;
 import com.itheima.tools.log.annotation.SysLog;
-import com.itheima.tools.user.feign.UserQuery;
-import com.itheima.tools.user.model.SysOrg;
-import com.itheima.tools.user.model.SysRole;
-import com.itheima.tools.user.model.SysStation;
-import com.itheima.tools.user.model.SysUser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -35,12 +34,13 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.itheima.tools.exception.code.ExceptionCode.BASE_VALID_PARAM;
+import static com.itheima.tools.exception.code.ExceptionCode.BAD_REQUEST;
 
 /**
  * <p>
@@ -57,6 +57,10 @@ public class UserController extends BaseController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserGroupService userGroupService;
+    @Autowired
+    private UserGroupUserService userGroupUserService;
     @Autowired
     private OrgService orgService;
     @Autowired
@@ -182,6 +186,9 @@ public class UserController extends BaseController {
     @SysLog("查询用户")
     public R<User> get(@PathVariable Long id) {
         User item = userService.getById(id);
+        if (null == item) {
+            return success(null);
+        }
         List<Role> role = roleService.findRoleByUserId(item.getId());
         if (!CollectionUtils.isEmpty(role)) {
             List<String> roleNames = role.stream().map(roleItem -> roleItem.getName()).collect(Collectors.toList());
@@ -196,6 +203,15 @@ public class UserController extends BaseController {
         Org org = orgService.getById(item.getOrgId());
         if (org != null) {
             item.setOrgName(org.getName());
+        }
+        List<UserGroupUser> userGroupUsers = userGroupUserService.getGroupByUserId(item.getId());
+        if (!CollectionUtils.isEmpty(userGroupUsers)) {
+            List<Long> groupIds = userGroupUsers.stream().map(UserGroupUser::getGroupId).collect(Collectors.toList());
+            Collection<UserGroup> userGroups = userGroupService.listByIds(groupIds);
+            if (!CollectionUtils.isEmpty(userGroups)) {
+                List<String> userGroupsNames = userGroups.stream().map(UserGroup::getName).collect(Collectors.toList());
+                item.setUserGroupsNames(userGroupsNames);
+            }
         }
         log.info("getById({}) result:{}", id, item);
         return success(item);
@@ -289,7 +305,7 @@ public class UserController extends BaseController {
     @ApiOperation("导入")
     public R<? extends Object> importExcel(@RequestParam(value = "file") MultipartFile file) {
         if (file.isEmpty()) {
-            return fail(BASE_VALID_PARAM.build("导入内容为空"));
+            return fail(BAD_REQUEST.build("导入内容为空"));
         }
         Long begin = System.currentTimeMillis();
         ImportResultVO importResultVO = userService.importExcel(file);
@@ -298,6 +314,14 @@ public class UserController extends BaseController {
 
         log.info("导入excel 用时 :{}", (end - begin));
         return R.success(importResultVO);
+    }
+
+    @ApiOperation(value = "查询用户上下级结构", notes = "查询用户上下级结构")
+    @GetMapping("hierarchy/{id}")
+    @SysLog("查询用户上下级结构")
+    public R<HierarchyDTO> hierarchy(@PathVariable Long id) {
+        HierarchyDTO hierarchyDTO = userService.findHierarchy(id);
+        return success(hierarchyDTO);
     }
 
     /**

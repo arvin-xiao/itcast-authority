@@ -173,7 +173,7 @@ public class RoleController extends BaseController {
 
 
     @ApiOperation(value = "给角色配置权限", notes = "给角色配置权限")
-    @PostMapping("/authority")
+    @PutMapping("/authority")
     @SysLog("给角色配置权限")
     public R<Boolean> saveRoleAuthority(@RequestBody RoleAuthoritySaveDTO roleAuthoritySaveDTO) {
         return success(roleAuthorityService.saveRoleAuthority(roleAuthoritySaveDTO));

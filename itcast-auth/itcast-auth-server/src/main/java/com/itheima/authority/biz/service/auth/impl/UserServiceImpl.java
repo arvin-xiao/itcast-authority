@@ -15,10 +15,7 @@ import com.itheima.authority.biz.service.auth.UserRoleService;
 import com.itheima.authority.biz.service.auth.UserService;
 import com.itheima.authority.biz.service.core.OrgService;
 import com.itheima.authority.biz.service.core.StationService;
-import com.itheima.authority.dto.auth.LoginDTO;
-import com.itheima.authority.dto.auth.ResourceQueryDTO;
-import com.itheima.authority.dto.auth.UserDTO;
-import com.itheima.authority.dto.auth.UserUpdatePasswordDTO;
+import com.itheima.authority.dto.auth.*;
 import com.itheima.authority.entity.auth.*;
 import com.itheima.authority.entity.core.Org;
 import com.itheima.authority.entity.core.Station;
@@ -31,11 +28,14 @@ import com.itheima.tools.database.mybatis.auth.DataScopeType;
 import com.itheima.tools.database.mybatis.conditions.Wraps;
 import com.itheima.tools.database.mybatis.conditions.query.LbqWrapper;
 import com.itheima.tools.dozer.DozerUtils;
+import com.itheima.tools.exception.BizException;
+import com.itheima.tools.exception.code.ExceptionCode;
 import com.itheima.tools.utils.BizAssert;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -237,6 +237,98 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     /**
+     * 获取人员关系结构
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public HierarchyDTO findHierarchy(Long id) {
+        HierarchyDTO hierarchyDTO = new HierarchyDTO();
+        User user = this.getById(id);
+        Station station = stationService.getById(user.getStationId());
+        if (station != null) {
+            user.setStationName(station.getName());
+        }
+        log.info("当前用户:{}", user);
+        Stack<User> stack = new Stack<>();
+        getSuperiorStack(stack, user, 1);
+
+        List<User> list = new ArrayList<>();
+        getDownwardList(list, user);
+
+        buildTree(stack, list, hierarchyDTO);
+        return hierarchyDTO;
+    }
+
+    private void buildTree(Stack<User> stack, List<User> list, HierarchyDTO hierarchyDTO) {
+        if (stack == null || stack.size() == 0) {
+            return;
+        }
+        User user = stack.pop();
+        if (stack.size() == 0) {
+            BeanUtils.copyProperties(user, hierarchyDTO);
+            hierarchyDTO.setSelf(true);
+            hierarchyDTO.setChildren(list.stream().map(item -> {
+                HierarchyDTO hierarchy = new HierarchyDTO();
+                BeanUtils.copyProperties(item, hierarchy);
+                return hierarchy;
+            }).collect(Collectors.toList()));
+        } else {
+            BeanUtils.copyProperties(user, hierarchyDTO);
+
+            HierarchyDTO hierarchy = new HierarchyDTO();
+            hierarchyDTO.setChildren(Arrays.asList(new HierarchyDTO[]{hierarchy}));
+
+            buildTree(stack, list, hierarchy);
+        }
+
+    }
+
+    /**
+     * 获取下级的员工集合
+     *
+     * @param list
+     * @param user
+     */
+    private void getDownwardList(List<User> list, User user) {
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(User::getSuperior, user.getId());
+        List<User> users = this.list(wrapper);
+        list.addAll(users.stream().map(item -> {
+            Station station = stationService.getById(item.getStationId());
+            if (station != null) {
+                item.setStationName(station.getName());
+            }
+            return item;
+        }).collect(Collectors.toList()));
+    }
+
+    /**
+     * 获取上级关系,默认最多20级，防止内存泄露
+     *
+     * @param stack
+     * @param user
+     * @param depth
+     */
+    private void getSuperiorStack(Stack stack, User user, int depth) {
+        stack.add(user);
+        if (depth > 20) {
+            return;
+        }
+        Long superior = user.getSuperior();
+        if (null == superior || superior < 0L) {
+            return;
+        }
+        User userSuperior = this.getById(superior);
+        Station station = stationService.getById(userSuperior.getStationId());
+        if (station != null) {
+            userSuperior.setStationName(station.getName());
+        }
+        getSuperiorStack(stack, userSuperior, ++depth);
+    }
+
+    /**
      * 修改密码
      *
      * @param data
@@ -356,6 +448,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         user.setPassword(DigestUtils.md5Hex(user.getPassword()));
         user.setPasswordErrorNum(0);
+
+        if (user.getSuperior() == null) {
+            user.setSuperior(-1L);
+        }
+
         super.save(user);
 
         List<Long> roles = user.getRoles();
@@ -405,6 +502,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (StrUtil.isNotEmpty(user.getPassword())) {
             user.setPassword(DigestUtils.md5Hex(user.getPassword()));
         }
+        User userDb = this.getById(user);
+        if (user.getSuperior() != null) {
+            if (!user.getSuperior().equals(userDb.getSuperior())) {
+                boolean flag = checkSuperior(user.getSuperior(), user.getId());
+                if (!flag) {
+                    throw new BizException(ExceptionCode.BAD_REQUEST.getCode(), "直属上级已经是当前用户的下属！");
+                }
+            }
+        } else {
+            user.setSuperior(-1L);
+        }
         super.updateById(user);
 
         updateUserRole(user);
@@ -424,5 +532,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 .in(UserRole::getUserId, ids)
         );
         return super.removeByIds(ids);
+    }
+
+    private boolean checkSuperior(Long superiorId, Long userId) {
+        if (userId.equals(superiorId)) {
+            return false;
+        }
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(User::getSuperior, userId);
+        List<User> users = this.list(wrapper);
+        for (User user : users) {
+            if (user.getId().equals(superiorId)) {
+                return false;
+            } else {
+                boolean flag = checkSuperior(superiorId, user.getId());
+                if (!flag) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

@@ -24,7 +24,7 @@ public class CustomizeDataScope implements AbstractDataScopeHandler {
     @Override
     public List<Long> getOrgIds(List<Long> orgList, Long userId) {
         if (orgList == null || orgList.isEmpty()) {
-            throw new BizException(ExceptionCode.BASE_VALID_PARAM.getCode(), "自定义数据权限类型时，组织不能为空");
+            throw new BizException(ExceptionCode.BAD_REQUEST.getCode(), "自定义数据权限类型时，组织不能为空");
         }
         for (Long org : orgList) {
             List<Org> children = orgService.findChildren(org);

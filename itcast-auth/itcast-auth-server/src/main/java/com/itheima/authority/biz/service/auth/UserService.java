@@ -2,6 +2,7 @@ package com.itheima.authority.biz.service.auth;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.itheima.authority.dto.auth.HierarchyDTO;
 import com.itheima.authority.dto.auth.LoginDTO;
 import com.itheima.authority.dto.auth.UserUpdatePasswordDTO;
 import com.itheima.authority.entity.auth.User;
@@ -50,4 +51,6 @@ public interface UserService extends IService<User> {
     void updateUserRole(User user);
 
     R<LoginDTO> current();
+
+    HierarchyDTO findHierarchy(Long id);
 }
