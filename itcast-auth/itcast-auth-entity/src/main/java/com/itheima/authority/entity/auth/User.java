@@ -175,4 +175,8 @@ public class User extends Entity<Long> {
     @ApiModelProperty(value = "角色名称集合")
     @TableField(exist = false)
     private List<String> roleNames;
+
+    @ApiModelProperty(value = "用户组名称")
+    @TableField(exist = false)
+    private List<String> userGroupsNames;
 }
