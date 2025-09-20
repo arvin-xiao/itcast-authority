@@ -69,7 +69,7 @@
 
     <properties>
         <itcast-api.version>LATEST</itcast-api.version>
-        <itcast-tools.version>LATEST</itcast-tools.version>
+        <itcast-tools.version>2.1.9</itcast-tools.version>
 
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -96,6 +96,7 @@
         <guava.version>20.0</guava.version>
         <hutool.version>5.1.0</hutool.version>
         <easy-captcha.version>1.6.2</easy-captcha.version>
+        <lib.path>D:/code/itcast-authority</lib.path>
     </properties>
 
     <dependencyManagement>
@@ -125,68 +126,89 @@
             <dependency>
                 <groupId>com.itheima</groupId>
                 <artifactId>itcast-auth-entity</artifactId>
-                <version>${itcast-tools.version}</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>com.itheima</groupId>
                 <artifactId>itcast-auth-api</artifactId>
                 <version>${itcast-api.version}</version>
             </dependency>
-
             <!-- itcast-tools -->
             <dependency>
                 <groupId>com.itheima</groupId>
                 <artifactId>itcast-tools-common</artifactId>
+                <systemPath>${lib.path}/lib/itcast-tools-common-2.1.9.jar</systemPath>
+                <scope>system</scope>
                 <version>${itcast-tools.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.itheima</groupId>
                 <artifactId>itcast-tools-j2cache</artifactId>
+                <systemPath>${lib.path}/lib/itcast-tools-j2cache-2.1.9.jar</systemPath>
+                <scope>system</scope>
                 <version>${itcast-tools.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.itheima</groupId>
                 <artifactId>itcast-tools-user</artifactId>
+                <systemPath>${lib.path}/lib/itcast-tools-user-2.1.9.jar</systemPath>
+                <scope>system</scope>
                 <version>${itcast-tools.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.itheima</groupId>
                 <artifactId>itcast-tools-core</artifactId>
+                <systemPath>${lib.path}/lib/itcast-tools-core-2.1.9.jar</systemPath>
+                <scope>system</scope>
                 <version>${itcast-tools.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.itheima</groupId>
                 <artifactId>itcast-tools-databases</artifactId>
+                <systemPath>${lib.path}/lib/itcast-tools-databases-2.1.9.jar</systemPath>
+                <scope>system</scope>
                 <version>${itcast-tools.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.itheima</groupId>
                 <artifactId>itcast-tools-swagger2</artifactId>
+                <systemPath>${lib.path}/lib/itcast-tools-swagger2-2.1.9.jar</systemPath>
+                <scope>system</scope>
                 <version>${itcast-tools.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.itheima</groupId>
                 <artifactId>itcast-tools-dozer</artifactId>
+                <systemPath>${lib.path}/lib/itcast-tools-dozer-2.1.9.jar</systemPath>
+                <scope>system</scope>
                 <version>${itcast-tools.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.itheima</groupId>
                 <artifactId>itcast-tools-log</artifactId>
+                <systemPath>${lib.path}/lib/itcast-tools-log-2.1.9.jar</systemPath>
+                <scope>system</scope>
                 <version>${itcast-tools.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.itheima</groupId>
                 <artifactId>itcast-tools-validator</artifactId>
+                <systemPath>${lib.path}/lib/itcast-tools-validator-2.1.9.jar</systemPath>
+                <scope>system</scope>
                 <version>${itcast-tools.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.itheima</groupId>
                 <artifactId>itcast-tools-jwt</artifactId>
+                <systemPath>${lib.path}/lib/itcast-tools-jwt-2.1.9.jar</systemPath>
+                <scope>system</scope>
                 <version>${itcast-tools.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.itheima</groupId>
                 <artifactId>itcast-tools-xss</artifactId>
+                <systemPath>${lib.path}/lib/itcast-tools-xss-2.1.9.jar</systemPath>
+                <scope>system</scope>
                 <version>${itcast-tools.version}</version>
             </dependency>
 
@@ -262,13 +284,13 @@
         </dependency>
     </dependencies>
 
-    <repositories>
-        <repository>
-            <id>itheima</id>
-            <name>itheima</name>
-            <url>http://repo.itheima.net/repository/maven-public/</url>
-        </repository>
-    </repositories>
+<!--    <repositories>-->
+<!--        <repository>-->
+<!--            <id>itheima</id>-->
+<!--            <name>itheima</name>-->
+<!--            <url>http://repo.itheima.net/repository/maven-public/</url>-->
+<!--        </repository>-->
+<!--    </repositories>-->
 
 
     <build>

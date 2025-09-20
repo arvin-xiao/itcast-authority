@@ -6,7 +6,7 @@
         <artifactId>itcast-auth</artifactId>
         <groupId>com.itheima</groupId>
         <version>1.0.0</version>
-        <relativePath>../</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -26,7 +26,18 @@
             <groupId>com.itheima</groupId>
             <artifactId>itcast-tools-jwt</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.itheima</groupId>
+            <artifactId>itcast-tools-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.itheima</groupId>
+            <artifactId>itcast-tools-swagger2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.itheima</groupId>
+            <artifactId>itcast-tools-validator</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus</artifactId>
@@ -43,22 +54,34 @@
         <dependency>
             <groupId>com.itheima</groupId>
             <artifactId>itcast-tools-databases</artifactId>
-            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>1.5.22</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
         </dependency>
     </dependencies>
 
 
-    <distributionManagement>
-        <repository>
-            <id>nexus-release</id>
-            <name>Nexus release Repository</name>
-            <url>http://repo.itheima.net/repository/maven-releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>nexus-snapshots</id>
-            <name>Nexus snapshots Repository</name>
-            <url>http://repo.itheima.net/repository/maven-snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
+<!--    <distributionManagement>-->
+<!--        <repository>-->
+<!--            <id>nexus-release</id>-->
+<!--            <name>Nexus release Repository</name>-->
+<!--            <url>http://repo.itheima.net/repository/maven-releases/</url>-->
+<!--        </repository>-->
+<!--        <snapshotRepository>-->
+<!--            <id>nexus-snapshots</id>-->
+<!--            <name>Nexus snapshots Repository</name>-->
+<!--            <url>http://repo.itheima.net/repository/maven-snapshots/</url>-->
+<!--        </snapshotRepository>-->
+<!--    </distributionManagement>-->
 </project>

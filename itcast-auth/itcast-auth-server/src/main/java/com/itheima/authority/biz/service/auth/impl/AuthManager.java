@@ -98,7 +98,7 @@ public class AuthManager {
      * @return
      */
     private Token getToken(User user) {
-        JwtUserInfo userInfo = new JwtUserInfo(user.getId(), user.getAccount(), user.getName(), user.getOrgId(), user.getStationId());
+        JwtUserInfo userInfo = new JwtUserInfo(user.getId(), user.getAccount(), user.getName(), user.getOrgId(), user.getStationId(),null,false);
 
         Token token = this.jwtTokenServerUtils.generateUserToken(userInfo, null);
         log.info("token={}", token.getToken());

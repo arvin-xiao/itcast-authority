@@ -21,6 +21,10 @@
         </dependency>
         <dependency>
             <groupId>com.itheima</groupId>
+            <artifactId>itcast-tools-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.itheima</groupId>
             <artifactId>itcast-tools-log</artifactId>
             <exclusions>
                 <exclusion>
@@ -46,6 +50,7 @@
         <dependency>
             <groupId>com.itheima</groupId>
             <artifactId>itcast-auth-api</artifactId>
+            <version>1.0.1</version>
         </dependency>
 
         <dependency>
@@ -90,6 +95,13 @@
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-spring-ui</artifactId>
             <version>2.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>net.oschina.j2cache</groupId>
+            <artifactId>j2cache-core</artifactId>
+            <scope>system</scope>
+            <systemPath>${lib.path}/lib/j2cache-core-2.4.1-release.jar</systemPath>
+            <version>2.4.1-release</version>
         </dependency>
     </dependencies>
 

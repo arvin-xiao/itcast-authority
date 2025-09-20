@@ -15,6 +15,7 @@
     <description>传智权限管家-权限服务</description>
     <packaging>pom</packaging>
     <modules>
+        <module>itcast-auth-api</module>
         <module>itcast-auth-entity</module>
         <module>itcast-auth-server</module>
     </modules>

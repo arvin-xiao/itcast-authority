@@ -1,11 +1,11 @@
 package com.itheima.authority.dto.core;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.itheima.tools.model.ITreeNode;
 import io.swagger.annotations.ApiModel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class OrgUserTreeDTO implements ITreeNode<OrgUserTreeDTO, Long> {
     private Integer type;
 
     public Boolean getEnable() {
-        if (type == 1 && CollectionUtils.isEmpty(children)) {
+        if (type == 1 && CollectionUtil.isEmpty(children)) {
             return false;
         }
         return true;

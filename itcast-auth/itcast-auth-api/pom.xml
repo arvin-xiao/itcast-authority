@@ -62,18 +62,18 @@
         </dependency>
     </dependencies>
 
-    <distributionManagement>
-        <repository>
-            <id>nexus-release</id>
-            <name>Nexus release Repository</name>
-            <url>http://repo.itheima.net/repository/maven-releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>nexus-snapshots</id>
-            <name>Nexus snapshots Repository</name>
-            <url>http://repo.itheima.net/repository/maven-snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
+<!--    <distributionManagement>-->
+<!--        <repository>-->
+<!--            <id>nexus-release</id>-->
+<!--            <name>Nexus release Repository</name>-->
+<!--            <url>http://repo.itheima.net/repository/maven-releases/</url>-->
+<!--        </repository>-->
+<!--        <snapshotRepository>-->
+<!--            <id>nexus-snapshots</id>-->
+<!--            <name>Nexus snapshots Repository</name>-->
+<!--            <url>http://repo.itheima.net/repository/maven-snapshots/</url>-->
+<!--        </snapshotRepository>-->
+<!--    </distributionManagement>-->
 
     <build>
         <plugins>
